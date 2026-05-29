@@ -1,11 +1,16 @@
 public class Person {
-private String name;
+    private static Long lastId = 1L;
+    private Long id;
+
+    private String name;
 
 private int age;
 
 public Person(String name, int age) {
     this.name = name;
     this.age = age;
+
+    this.id = lastId++;
 }
 
     public String getName() {
@@ -25,10 +30,16 @@ public Person(String name, int age) {
             this.age = age;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+
     @Override
     public String toString() {
         return "Person{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", age=" + age +
                 '}';
     }

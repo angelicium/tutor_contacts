@@ -1,36 +1,26 @@
+import org.w3c.dom.ls.LSOutput;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
-//    int i = 11;
-//    while(i <= 10) {
-//        System.out.println(i);
-//
-//        i++;
-//    }
-//    int i = 1;
-//    do {
-//        System.out.println("Do while");
-//        System.out.println(i);
-//
-//        i++;
-//    } while(i<=10);
-
-
     private static List<Person> contacts = new ArrayList<>() {
         {
             add(
-                    new Person(
+                    new Contact(
                             "Daniil",
-                            22
+                            22,
+                            891655
                     )
             );
             add(
-                    new Person(
+                    new Worker(
                             "Angelica",
-                            22
+                            22,
+                            8915444,
+                            "angelica@mail.ru"
                     )
             );
         }
@@ -74,25 +64,70 @@ public class Main {
     }
 
     private static void read() {
-        for (int i = 0; i < contacts.size(); i++) {
-            System.out.println((i + 1) + ". " + contacts.get(i));
+        System.out.println("1. Все\n2. Контакт\n3. Работники");
+        Scanner scanner = new Scanner(System.in);
+        int choice = scanner.nextInt();
+        switch(choice) {
+            case 1:
+                System.out.println(contacts);
+                break;
+            case 2:
+                printContacts();
+                break;
+
+            case 3:
+                printWorkers();
+                break;
+        }
+    }
+
+    private static void printContacts() {
+        for(Person contact : contacts) {
+            if(contact instanceof Contact && !(contact instanceof Worker)) {
+                System.out.println(contact);
+            }
+        }
+    }
+
+    private static void printWorkers() {
+        for(Person contact : contacts) {
+            if(contact instanceof Worker) {
+                System.out.println(contact);
+            }
         }
     }
 
     private static void add() {
-        System.out.println("Введите имя");
+        System.out.println("Кого хотите добавить: 1. Контакт 2. Работник");
         Scanner scanner = new Scanner(System.in);
-        String name = scanner.nextLine();
+        int contactType = scanner.nextInt();
+        System.out.println("Введите имя");
+        Scanner scanner1 = new Scanner(System.in);
+        String name = scanner1.nextLine();
         System.out.println("Введите возраст");
         Scanner scanner2 = new Scanner(System.in);
+        int age = 0;
+        int number = 0;
+        String workEmail = null;
         try {
-            int age = scanner2.nextInt();
-            Person newContact = new Person(name, age);
-            contacts.add(newContact);
-            read();
+            age = scanner2.nextInt();
         } catch (Exception e) {
             System.out.println("Введите число");
         }
+        switch(contactType) {
+            case 2:
+                Scanner scanner3 = new Scanner(System.in);
+                System.out.println("Введите email");
+                workEmail = scanner3.nextLine();
+            case 1:
+                System.out.println("Введите номер телефона");
+                number = scanner2.nextInt();
+                break;
+        }
+        Person newContact = contactType == 1 ? new Contact(name, age, number): new Worker(name, age, number, workEmail);
+
+        contacts.add(newContact);
+        read();
     }
 
     private static void update() {
@@ -109,7 +144,7 @@ public class Main {
         int choice = scanner.nextInt();
         scanner.nextLine();
         if (choice < 1 || choice > contacts.size()) {
-            System.out.println("Неверный номер контакта");
+            System.out.println("Неверн ый номер контакта");
             return;
         }
         System.out.println("Введите имя нового контакта");
@@ -130,22 +165,29 @@ public class Main {
             System.out.println("Список контактов пуст, нечего удалять");
             return;
     }
-        System.out.println("Выберите номер контакта, который хотите удалить");
-        read();
-        Scanner scanner1 = new Scanner(System.in);
-        int choice1 = scanner1.nextInt();
-        if (choice1 < 1 || choice1 > contacts.size()) {
-            System.out.println("Неверный номер контакта");
-            return;
-        }
-        int index = choice1 - 1;
-        contacts.remove(index);
-        read();
+        Scanner scanner = new Scanner(System.in);
+      do {
+          System.out.println("Выберите номер контакта, который хотите удалить");
+          read();
+
+          int choice = scanner.nextInt();
+          if (choice < 1 || choice > contacts.size()) {
+              System.out.println("Неверный номер контакта");
+              continue;
+          }
+          int index = choice - 1;
+          contacts.remove(index);
+          read();
+          return;
+      } while(true);
+
     }
 
     private static void printMenu() { // void -- значит ничего не возвращает, а параметры это когда мы
         // извне что-то берем. есть public, private и protected - позволяет принаследовании получить
         //доступ к данным родителя внутри пакета
+        // static позволяет прикрепить какие-то методы и свойства класса к самому классу
+
         System.out.println("___Menu___");
         System.out.println("1. Read");
         System.out.println("2. Add");

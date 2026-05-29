@@ -1,4 +1,5 @@
 public class Contact extends Person {
+
     private int number;
 
     public Contact(String name, int age, int number) {
