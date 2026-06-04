@@ -1,5 +1,3 @@
-import org.w3c.dom.ls.LSOutput;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -67,7 +65,7 @@ public class Main {
         System.out.println("1. Все\n2. Контакт\n3. Работники");
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
-        switch(choice) {
+        switch (choice) {
             case 1:
                 System.out.println(contacts);
                 break;
@@ -82,16 +80,16 @@ public class Main {
     }
 
     private static void printContacts() {
-        for(Person contact : contacts) {
-            if(contact instanceof Contact && !(contact instanceof Worker)) {
+        for (Person contact : contacts) {
+            if (contact instanceof Contact && !(contact instanceof Worker)) {
                 System.out.println(contact);
             }
         }
     }
 
     private static void printWorkers() {
-        for(Person contact : contacts) {
-            if(contact instanceof Worker) {
+        for (Person contact : contacts) {
+            if (contact instanceof Worker) {
                 System.out.println(contact);
             }
         }
@@ -114,7 +112,7 @@ public class Main {
         } catch (Exception e) {
             System.out.println("Введите число");
         }
-        switch(contactType) {
+        switch (contactType) {
             case 2:
                 Scanner scanner3 = new Scanner(System.in);
                 System.out.println("Введите email");
@@ -124,7 +122,7 @@ public class Main {
                 number = scanner2.nextInt();
                 break;
         }
-        Person newContact = contactType == 1 ? new Contact(name, age, number): new Worker(name, age, number, workEmail);
+        Person newContact = contactType == 1 ? new Contact(name, age, number) : new Worker(name, age, number, workEmail);
 
         contacts.add(newContact);
         read();
@@ -132,55 +130,91 @@ public class Main {
 
     private static void update() {
 
-
         if (contacts.isEmpty()) {
             System.out.println("Список контактов пуст, нечего обновлять");
             return;
 
         }
-        System.out.println("Выберите номер контакта, который хотите обновить");
-        read();
+        System.out.println("Выберите айди контакта, который хотите обновить");
+        System.out.println(contacts);
         Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
+        Long contantId = scanner.nextLong();
         scanner.nextLine();
-        if (choice < 1 || choice > contacts.size()) {
-            System.out.println("Неверн ый номер контакта");
+        if (contantId < 1 || contantId > Person.getLastId()) {
+            System.out.println("Неверный айди контакта");
             return;
         }
-        System.out.println("Введите имя нового контакта");
-        String newName = scanner.nextLine();
-        System.out.println("Введите возраст нового контакта");
-        int newAge = scanner.nextInt();
+        Person person = findContactById(contantId);
 
-        Person newContact = new Person(newName, newAge);
-
-        int index = choice - 1;
-        contacts.set(index, newContact);
-
-        read();
+        if (person instanceof Worker) {
+            Worker worker = (Worker) person;
+            System.out.println("Введите новое имя работника");
+            String newName = scanner.nextLine();
+            System.out.println("Введите новый возраст работника");
+            int newAge = scanner.nextInt();
+            System.out.println("Введите новый номер телефона работника");
+            int newNumber = scanner.nextInt();
+            Scanner s = new Scanner(System.in);
+            System.out.println("Введите новый мейл работника");
+            String newEmail = s.nextLine();
+            worker.setName(newName);
+            worker.setAge(newAge);
+            worker.setNumber(newNumber);
+            worker.setWorkEmail(newEmail);
+        } else {
+            Contact contact = (Contact) person;
+            System.out.println("Введите новое имя контакта");
+            String newName = scanner.nextLine();
+            System.out.println("Введите новый возраст контакта");
+            int newAge = scanner.nextInt();
+            System.out.println("Введите новый номер телефона контакта");
+            int newNumber = scanner.nextInt();
+            contact.setName(newName);
+            contact.setAge(newAge);
+            contact.setNumber(newNumber);
+        }
+        System.out.println(contacts);
 
     }
+
     private static void delete() {
         if (contacts.isEmpty()) {
             System.out.println("Список контактов пуст, нечего удалять");
             return;
-    }
+        }
         Scanner scanner = new Scanner(System.in);
-      do {
-          System.out.println("Выберите номер контакта, который хотите удалить");
-          read();
+        do {
+            System.out.println("Выберите айди контакта, который хотите удалить");
+            System.out.println(contacts);
 
-          int choice = scanner.nextInt();
-          if (choice < 1 || choice > contacts.size()) {
-              System.out.println("Неверный номер контакта");
-              continue;
-          }
-          int index = choice - 1;
-          contacts.remove(index);
-          read();
-          return;
-      } while(true);
+            Long id = scanner.nextLong();
+            if (id < 1 || id > Person.getLastId()) {
+                System.out.println("Неверный айди контакта");
+                continue;
+            }
+            deleteContactById(id);
+            System.out.println(contacts);
+            return;
+        } while (true);
 
+    }
+
+    private static Person findContactById(Long id) {
+        for (Person contact : contacts) {
+            if (contact.getId().equals(id))
+                return contact;
+        }
+        return null;
+    }
+
+    private static void deleteContactById(Long id) {
+        for (int i = 0; i < contacts.size(); i++) {
+            Person person = contacts.get(i);
+            if (person != null && person.getId().equals(id)) {
+                contacts.remove(i);
+                return;
+            }
+        }
     }
 
     private static void printMenu() { // void -- значит ничего не возвращает, а параметры это когда мы

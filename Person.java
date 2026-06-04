@@ -34,6 +34,9 @@ public Person(String name, int age) {
         return id;
     }
 
+    public static Long getLastId() {
+        return lastId;
+    }
 
     @Override
     public String toString() {
